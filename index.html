@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robiul Islam - Fundamental Questions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a);
+            color: #ffffff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .background {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .background::before {
+            content: '';
+            position: absolute;
+            width: 288px;
+            height: 288px;
+            background: #3b82f6;
+            border-radius: 50%;
+            top: 0;
+            left: -16px;
+            opacity: 0.2;
+            filter: blur(64px);
+            mix-blend-mode: multiply;
+            animation: blob 7s infinite;
+        }
+
+        .background::after {
+            content: '';
+            position: absolute;
+            width: 288px;
+            height: 288px;
+            background: #a855f7;
+            border-radius: 50%;
+            top: 0;
+            right: -16px;
+            opacity: 0.2;
+            filter: blur(64px);
+            mix-blend-mode: multiply;
+            animation: blob 7s infinite 2s;
+        }
+
+        .blob-2 {
+            position: absolute;
+            width: 288px;
+            height: 288px;
+            background: #6366f1;
+            border-radius: 50%;
+            bottom: -32px;
+            left: 80px;
+            opacity: 0.2;
+            filter: blur(64px);
+            mix-blend-mode: multiply;
+            animation: blob 7s infinite 4s;
+        }
+
+        @keyframes blob {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 50;
+            transition: all 0.5s ease;
+            backdrop-filter: blur(0px);
+            background: transparent;
+            border-bottom: 1px solid transparent;
+        }
+
+        nav.scrolled {
+            backdrop-filter: blur(12px);
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            max-width: 80rem;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-title {
+            font-size: 1.25rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            color: #ffffff;
+        }
+
+        .sparkle {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: #c084fc;
+        }
+
+        /* Language Dropdown */
+        .language-dropdown {
+            position: relative;
+        }
+
+        .dropdown-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .dropdown-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            width: 16rem;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.75rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.95);
+            transform-origin: top right;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(12px);
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .language-dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        .language-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .language-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .language-item.active {
+            background: #a855f7;
+            color: #ffffff;
+        }
+
+        .flag {
+            font-size: 1.5rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 5rem;
+            padding-bottom: 5rem;
+        }
+
+        .hero-content {
+            max-width: 56rem;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            text-align: center;
+        }
+
+        .hero-divider {
+            width: 3rem;
+            height: 0.25rem;
+            background: linear-gradient(to right, #c084fc, #3b82f6);
+            margin: 0 auto 2rem;
+            animation: slideDown 0.8s ease;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 300;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.25rem;
+            }
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #c084fc, #f472b6, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 32rem;
+            margin: 0 auto 1rem;
+            line-height: 1.6;
+            font-weight: 300;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .hero-divider-2 {
+            width: 3rem;
+            height: 0.25rem;
+            background: linear-gradient(to right, #3b82f6, #a855f7);
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            animation: fadeInUp 1s ease 1s both;
+        }
+
+        .scroll-text {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.875rem;
+            font-weight: 300;
+        }
+
+        .scroll-wheel {
+            width: 1.5rem;
+            height: 2.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 0.75rem;
+            display: flex;
+            justify-content: center;
+            padding: 0.5rem 0;
+        }
+
+        .scroll-dot {
+            width: 0.25rem;
+            height: 0.5rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 0.125rem;
+            animation: bounce 2s infinite;
+        }
+
+        /* Questions Section */
+        .questions-section {
+            position: relative;
+            z-index: 10;
+            padding: 5rem 1.5rem;
+        }
+
+        .questions-container {
+            max-width: 80rem;
+            margin: 0 auto;
+        }
+
+        .questions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .questions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Question Card */
+        .question-card {
+            position: relative;
+            cursor: pointer;
+            animation: fadeInUp 0.8s ease;
+            animation-fill-mode: both;
+        }
+
+        .question-card:nth-child(1) { animation-delay: 0.1s; }
+        .question-card:nth-child(2) { animation-delay: 0.2s; }
+        .question-card:nth-child(3) { animation-delay: 0.3s; }
+        .question-card:nth-child(4) { animation-delay: 0.4s; }
+        .question-card:nth-child(5) { animation-delay: 0.5s; }
+        .question-card:nth-child(6) { animation-delay: 0.6s; }
+
+        .card-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.5s ease;
+        }
+
+        .question-card:hover .card-bg {
+            border-color: rgba(168, 85, 247, 0.5);
+        }
+
+        .card-glow {
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(to right, #a855f7, #f472b6, #3b82f6);
+            border-radius: 1rem;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.5s ease;
+            filter: blur(20px);
+        }
+
+        .question-card:hover .card-glow {
+            opacity: 0.2;
+        }
+
+        .card-content {
+            position: relative;
+            padding: 2rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .card-number {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: linear-gradient(to right, #a855f7, #f472b6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 1.125rem;
+            margin-bottom: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 300;
+            line-height: 1.4;
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            transition: all 0.5s ease;
+        }
+
+        .question-card:hover .question-text {
+            background: linear-gradient(to right, #c084fc, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-underline {
+            height: 0.25rem;
+            width: 0;
+            background: linear-gradient(to right, #c084fc, #f472b6);
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+
+        .question-card:hover .card-underline {
+            width: 3rem;
+        }
+
+        /* Bottom Message */
+        .closing-section {
+            position: relative;
+            z-index: 10;
+            padding: 5rem 1.5rem;
+        }
+
+        .closing-content {
+            max-width: 48rem;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .closing-text {
+            font-size: 2.25rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @media (max-width: 768px) {
+            .closing-text {
+                font-size: 1.5rem;
+            }
+        }
+
+        .closing-divider {
+            width: 4rem;
+            height: 0.25rem;
+            background: linear-gradient(to right, #c084fc, #3b82f6);
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        /* Footer */
+        footer {
+            position: relative;
+            z-index: 10;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(4px);
+            padding: 3rem 1.5rem;
+        }
+
+        .footer-content {
+            max-width: 80rem;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-text {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(168, 85, 247, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(168, 85, 247, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="background">
+        <div class="blob-2"></div>
+    </div>
+
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <svg class="sparkle" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <h1 class="nav-title" id="navTitle">Robiul Islam</h1>
+            </div>
+            <div class="language-dropdown">
+                <button class="dropdown-btn">🌐 Languages</button>
+                <div class="dropdown-menu" id="dropdownMenu"></div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-divider"></div>
+            <h2 class="hero-title">
+                <span class="gradient-text">Fundamental</span><br>
+                <span>Questions</span>
+            </h2>
+            <p class="hero-subtitle">Life's deepest inquiries. Answered within yourself.</p>
+            <div class="hero-divider-2"></div>
+        </div>
+        <div class="scroll-indicator">
+            <span class="scroll-text">Scroll</span>
+            <div class="scroll-wheel">
+                <div class="scroll-dot"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="questions-section">
+        <div class="questions-container">
+            <div class="questions-grid" id="questionsGrid"></div>
+        </div>
+    </section>
+
+    <section class="closing-section">
+        <div class="closing-content">
+            <p class="closing-text" id="closingText"></p>
+            <div class="closing-divider"></div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <p class="footer-text" id="footerText"></p>
+        </div>
+    </footer>
+
+    <script>
+        const translations = {
+            en: { name: 'Robiul Islam', questions: ['Why am I here?', 'What is the meaning of this life?', 'Who sent me into this world?', 'Where am I heading after this life?', 'Who is my true companion?', 'How should I shape my life?'], closing: 'People ultimately find what they truly seek.', footer: '© 2025 Robiul Islam. All rights reserved.' },
+            es: { name: 'Robiul Islam', questions: ['Por que estoy aqui?', 'Cual es el significado de esta vida?', 'Quien me envio a este mundo?', 'Hacia donde voy despues de esta vida?', 'Quien es mi verdadero companero?', 'Como deberia moldear mi vida?'], closing: 'Las personas finalmente encuentran lo que verdaderamente buscan.', footer: '© 2025 Robiul Islam. Todos los derechos reservados.' },
+            ar: { name: 'روبيول إسلام', questions: ['لماذا أنا هنا؟', 'ما معنى هذه الحياة؟', 'من الذي أرسلني إلى هذا العالم؟', 'إلى أين أتجه بعد هذه الحياة؟', 'من هو رفيقي الحقيقي؟', 'كيف يجب أن أشكل حياتي؟'], closing: 'الناس في النهاية يجدون ما يسعون إليه حقاً.', footer: '© 2025 روبيول إسلام. جميع الحقوق محفوظة.' },
+            fr: { name: 'Robiul Islam', questions: ['Pourquoi suis-je ici?', 'Quel est le sens de cette vie?', 'Qui m\'ai envoye dans ce monde?', 'Ou vais-je apres cette vie?', 'Qui est mon vrai compagnon?', 'Comment dois-je façonner ma vie?'], closing: 'Les gens trouvent finalement ce qu\'ils cherchent vraiment.', footer: '© 2025 Robiul Islam. Tous droits reserves.' },
+            de: { name: 'Robiul Islam', questions: ['Warum bin ich hier?', 'Was ist der Sinn dieses Lebens?', 'Wer hat mich in diese Welt geschickt?', 'Wohin gehe ich nach diesem Leben?', 'Wer ist mein wahrer Begleiter?', 'Wie sollte ich mein Leben gestalten?'], closing: 'Menschen finden letztendlich das, was sie wirklich suchen.', footer: '© 2025 Robiul Islam. Alle Rechte vorbehalten.' },
+            pt: { name: 'Robiul Islam', questions: ['Por que estou aqui?', 'Qual e o significado desta vida?', 'Quem me mandou para este mundo?', 'Para onde vou apos esta vida?', 'Quem e meu verdadeiro companheiro?', 'Como devo moldar minha vida?'], closing: 'As pessoas finalmente encontram o que verdadeiramente procuram.', footer: '© 2025 Robiul Islam. Todos os direitos reservados.' },
+            it: { name: 'Robiul Islam', questions: ['Perche sono qui?', 'Qual e il significato di questa vita?', 'Chi mi ha mandato in questo mondo?', 'Dove vado dopo questa vita?', 'Chi e il mio vero compagno?', 'Come dovrei plasmare la mia vita?'], closing: 'Le persone trovano infine quello che veramente cercano.', footer: '© 2025 Robiul Islam. Tutti i diritti riservati.' },
+            ru: { name: 'Робиул Ислам', questions: ['Почему я здесь?', 'В чём смысл этой жизни?', 'Кто отправил меня в этот мир?', 'Куда я направляюсь после этой жизни?', 'Кто мой истинный спутник?', 'Как мне формировать свою жизнь?'], closing: 'Люди в конце концов находят то, что действительно ищут.', footer: '© 2025 Робиул Ислам. Все права защищены.' },
+            ja: { name: 'ロビウル・イスラム', questions: ['私はなぜここにいるのか?', 'この人生の意味は何か?', '誰が私をこの世に送ったのか?', 'この人生の後、どこへ向かうのか?', '誰が私の真の伴侶なのか?', '私は人生をどう形作るべきか?'], closing: '人は結局、真に求めるものを見つける。', footer: '© 2025 ロビウル・イスラム。すべての権利を保有。' },
+            zh: { name: '罗比乌尔·伊斯兰', questions: ['我为什么在这里?', '这个生命的意义是什么?', '谁把我送入这个世界?', '这个生命结束后我要去哪里?', '谁是我真正的伴侣?', '我应该如何塑造我的生活?'], closing: '人们最终找到他们真正寻求的东西。', footer: '© 2025 罗比乌尔·伊斯兰。版权所有。' },
+            ko: { name: '로비울 이슬람', questions: ['나는 왜 여기에 있는가?', '이 삶의 의미는 무엇인가?', '누가 나를 이 세상에 보냈는가?', '이 삶 이후 나는 어디로 가는가?', '나의 참된 동반자는 누구인가?', '나는 어떻게 삶을 형성해야 하는가?'], closing: '사람들은 결국 자신이 진정으로 추구하는 것을 찾는다.', footer: '© 2025 로비울 이슬람. 모든 권리를 보유합니다.' },
+            tr: { name: 'Robiul Islam', questions: ['Neden buradayim?', 'Bu hayatin anlami nedir?', 'Beni bu dunyaya kim gonderdi?', 'Bu hayattan sonra nereye gidiyorum?', 'Gercek yoldasim kim?', 'Hayatimi nasil sekillendirmeliyim?'], closing: 'İnsanlar sonunda gercekten aradiklarina bulurlar.', footer: '© 2025 Robiul Islam. Tum haklari saklidir.' },
+            hi: { name: 'रोबिउल इस्लाम', questions: ['मैं यहाँ क्यों हूँ?', 'इस जीवन का अर्थ क्या है?', 'किसने मुझे इस दुनिया में भेजा?', 'इस जीवन के बाद मैं कहाँ जाऊँ?', 'मेरा सच्चा साथी कौन है?', 'मुझे अपना जीवन कैसे गढ़ना चाहिए?'], closing: 'लोग अंत में वही पाते हैं जो वे सच में चाहते हैं।', footer: '© 2025 रोबिउल इस्लाम। सर्वाधिकार सुरक्षित।' },
+            bn: { name: 'রোবিউল ইসলাম', questions: ['আমি কেন এখানে আছি?', 'এই জীবনের অর্থ কী?', 'কে আমাকে এই পৃথিবীতে পাঠিয়েছে?', 'এই জীবনের পরে আমি কোথায় যাচ্ছি?', 'আমার সত্যিকারের সঙ্গী কে?', 'আমি কীভাবে আমার জীবন গড়ব?'], closing: 'মানুষ শেষ পর্যন্ত যা খোঁজে তা খুঁজে পায়।', footer: '© 2025 রোবিউল ইসলাম। সর্বাধিকার সংরক্ষিত।' },
+            id: { name: 'Robiul Islam', questions: ['Mengapa saya di sini?', 'Apa arti kehidupan ini?', 'Siapa yang mengirim saya ke dunia ini?', 'Ke mana saya pergi setelah kehidupan ini?', 'Siapa pendamping sejati saya?', 'Bagaimana saya harus membentuk hidup saya?'], closing: 'Orang-orang pada akhirnya menemukan apa yang mereka cari.', footer: '© 2025 Robiul Islam. Semua hak dilindungi.' }
+        };
+
+        const languages = [
+            { code: 'en', name: 'English', flag: '🇺🇸' },
+            { code: 'bn', name: 'বাংলা', flag: '🇧🇩' },
+            { code: 'ar', name: 'العربية', flag: '🇸🇦' },
+            { code: 'es', name: 'Español', flag: '🇪🇸' },
+            { code: 'fr', name: 'Français', flag: '🇫🇷' },
+            { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+            { code: 'pt', name: 'Português', flag: '🇵🇹' },
+            { code: 'it', name: 'Italiano', flag: '🇮🇹' },
+            { code: 'ru', name: 'Русский', flag: '🇷🇺' },
+            { code: 'ja', name: '日本語', flag: '🇯🇵' },
+            { code: 'zh', name: '中文', flag: '🇨🇳' },
+            { code: 'ko', name: '한국어', flag: '🇰🇷' },
+            { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
+            { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
+            { code: 'id', name: 'Bahasa Indonesia', flag: '🇮🇩' }
+        ];
+
+        let currentLang = 'en';
+
+        function renderLanguages() {
+            const menu = document.getElementById('dropdownMenu');
+            menu.innerHTML = languages.map(function(lang) {
+                return '<button class="language-item ' + (currentLang === lang.code ? 'active' : '') + '" onclick="changeLanguage(\'' + lang.code + '\')"><span class="flag">' + lang.flag + '</span><span>' + lang.name + '</span></button>';
+            }).join('');
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+            
+            document.getElementById('navTitle').textContent = t.name;
+            document.getElementById('closingText').textContent = t.closing;
+            document.getElementById('footerText').textContent = t.footer;
+            
+            const grid = document.getElementById('questionsGrid');
+            grid.innerHTML = t.questions.map(function(q, i) {
+                return '<div class="question-card"><div class="card-glow"></div><div class="card-bg"></div><div class="card-content"><div class="card-number">' + (i + 1) + '</div><h3 class="question-text">' + q + '</h3><div class="card-underline"></div></div></div>';
+            }).join('');
+            
+            renderLanguages();
+        }
+
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        changeLanguage('en');
+    </script>
+</body>
+</html>
